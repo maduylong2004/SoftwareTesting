@@ -98,7 +98,7 @@ project-directory/
 
 - Tất cả bài kiểm thử đều chạy thành công.
 - Báo cáo kiểm thử hiển thị số lượng bài kiểm thử đã chạy, số bài kiểm thử thành công và thất bại.
-  ![Screenshot kết quả kiểm thử]("C:\Users\Admin\Pictures\Screenshots\Screenshot 2025-01-07 055246.png")
+  ![Screenshot kết quả kiểm thử](test_result_screenshot.png)
 ---
 
 ## **7. Tham khảo ChatGPT**
