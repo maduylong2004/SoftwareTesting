@@ -2,99 +2,98 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import com.longma.Calculator;
 
-
 public class CalculatorTest {
 
-    Calculator calculator = new Calculator(); // Tạo một instance của lớp Calculator
+    private final Calculator calculator = new Calculator();
 
+    // Kiểm thử phép cộng
     @Test
     void testAdd() {
-        assertEquals(5, calculator.add(2, 3));
-        assertEquals(0, calculator.add(-1, 1));
-        assertEquals(-2, calculator.add(-1, -1));
+        assertAll("Addition tests",
+            () -> assertEquals(5, calculator.add(2, 3), "2 + 3 should equal 5"),
+            () -> assertEquals(0, calculator.add(-1, 1), "-1 + 1 should equal 0"),
+            () -> assertEquals(-2, calculator.add(-1, -1), "-1 + -1 should equal -2")
+        );
     }
 
+    // Kiểm thử phép trừ
     @Test
     void testSubtract() {
-        assertEquals(1, calculator.subtract(3, 2));
-        assertEquals(-2, calculator.subtract(-1, 1));
-        assertEquals(0, calculator.subtract(2, 2));
+        assertAll("Subtraction tests",
+            () -> assertEquals(1, calculator.subtract(3, 2), "3 - 2 should equal 1"),
+            () -> assertEquals(-2, calculator.subtract(-1, 1), "-1 - 1 should equal -2"),
+            () -> assertEquals(0, calculator.subtract(2, 2), "2 - 2 should equal 0")
+        );
     }
 
+    // Kiểm thử phép nhân
     @Test
     void testMultiply() {
-        assertEquals(6, calculator.multiply(2, 3));
-        assertEquals(0, calculator.multiply(0, 5));
-        assertEquals(-10, calculator.multiply(-2, 5));
+        assertAll("Multiplication tests",
+            () -> assertEquals(6, calculator.multiply(2, 3), "2 * 3 should equal 6"),
+            () -> assertEquals(0, calculator.multiply(0, 5), "0 * 5 should equal 0"),
+            () -> assertEquals(-10, calculator.multiply(-2, 5), "-2 * 5 should equal -10")
+        );
     }
 
+    // Kiểm thử phép chia
     @Test
     void testDivide() {
-        assertEquals(2, calculator.divide(6, 3));
-        assertEquals(-3, calculator.divide(-6, 2));
-        assertThrows(ArithmeticException.class, () -> calculator.divide(1, 0));
+        assertAll("Division tests",
+            () -> assertEquals(2, calculator.divide(6, 3), "6 / 3 should equal 2"),
+            () -> assertEquals(-3, calculator.divide(-6, 2), "-6 / 2 should equal -3"),
+            () -> assertThrows(ArithmeticException.class, () -> calculator.divide(1, 0), "Division by zero should throw ArithmeticException")
+        );
     }
 
-    // Kiểm thử sự tương tác giữa các phép cộng và nhân
+    // Kiểm thử sự kết hợp phép cộng và nhân
     @Test
-    public void testAddThenMultiply() {
-        int addResult = calculator.add(2, 3); // 2 + 3 = 5
-        int multiplyResult = calculator.multiply(addResult, 4); // 5 * 4 = 20
-        assertEquals(20, multiplyResult, "The result of add then multiply should be correct.");
+    void testAddThenMultiply() {
+        int result = calculator.multiply(calculator.add(2, 3), 4); // (2 + 3) * 4 = 20
+        assertEquals(20, result, "(2 + 3) * 4 should equal 20");
     }
 
-    // Kiểm thử sự tương tác giữa phép chia và trừ
+    // Kiểm thử sự kết hợp phép chia và trừ
     @Test
-    public void testDivideThenSubtract() {
-        double divideResult = calculator.divide(10, 2); // 10 / 2 = 5
-        int subtractResult = calculator.subtract(7, (int) divideResult); // 7 - 5 = 2
-        assertEquals(2, subtractResult, "The result of divide then subtract should be correct.");
+    void testDivideThenSubtract() {
+        int result = calculator.subtract(7, (int) calculator.divide(10, 2)); // 7 - (10 / 2) = 2
+        assertEquals(2, result, "7 - (10 / 2) should equal 2");
     }
 
-    // Kiểm thử sự tương tác giữa phép cộng và chia với các giá trị biên
+    // Kiểm thử giá trị biên trong phép cộng và chia
     @Test
-    public void testAddThenDivide() {
-        int addResult = calculator.add(Integer.MAX_VALUE, 1); // Kiểm thử giá trị biên
-        assertThrows(ArithmeticException.class, () -> calculator.divide(addResult, 0), 
-                        "Division by zero should throw ArithmeticException.");
+    void testAddThenDivideBoundary() {
+        assertThrows(ArithmeticException.class, () -> calculator.divide(calculator.add(Integer.MAX_VALUE, 1), 0),
+            "Division by zero should throw ArithmeticException.");
     }
 
-    // Kiểm thử sự tương tác giữa phép nhân và trừ với số âm
+    // Kiểm thử phép nhân và trừ với số âm
     @Test
-    public void testMultiplyThenSubtractWithNegativeValues() {
-        int multiplyResult = calculator.multiply(-3, 5); // -3 * 5 = -15
-        int subtractResult = calculator.subtract(10, multiplyResult); // 10 - (-15) = 25
-        assertEquals(25, subtractResult, "The result of multiply then subtract with negative values should be correct.");
+    void testMultiplyThenSubtractWithNegativeValues() {
+        int result = calculator.subtract(10, calculator.multiply(-3, 5)); // 10 - (-3 * 5) = 25
+        assertEquals(25, result, "10 - (-3 * 5) should equal 25");
     }
 
+    // Kiểm thử hiệu năng phép cộng
     @Test
-    public void testAddPerformance() {
-        long startTime = System.nanoTime();
-        calculator.add(1000000, 2000000); // Thực hiện phép cộng
-        long endTime = System.nanoTime();
-        long duration = endTime - startTime;
-        System.out.println("Add performance test took: " + duration + " nanoseconds");
-        assertTrue(duration < 1000000, "Performance test failed. The operation took too long.");
+    void testAddPerformance() {
+        assertTimeoutPreemptively(java.time.Duration.ofMillis(1), () -> {
+            calculator.add(1000000, 2000000);
+        }, "Addition operation should complete within 1 millisecond.");
     }
 
+    // Kiểm thử hiệu năng phép nhân
     @Test
-    public void testMultiplyPerformance() {
-        long startTime = System.nanoTime();
-        try {
-            calculator.multiply(1000000, 2000000); // Kiểm tra hiệu suất
-        } catch (ArithmeticException e) {
-            // Bắt ngoại lệ nếu có tràn số và thông báo
-            System.out.println("Multiplication caused overflow: " + e.getMessage());
-        }
-        long endTime = System.nanoTime();
-        long duration = endTime - startTime;
-        System.out.println("Multiply performance test took: " + duration + " nanoseconds");
-        assertTrue(duration < 1000000, "Performance test failed. The operation took too long.");
+    void testMultiplyPerformance() {
+        assertTimeoutPreemptively(java.time.Duration.ofMillis(1), () -> {
+            calculator.multiply(1000000, 2000000);
+        }, "Multiplication operation should complete within 1 millisecond.");
     }
+
+    // Kiểm thử tràn số khi nhân
     @Test
-    public void testMultiplyWithLargeValues() {
-        assertThrows(ArithmeticException.class, () -> calculator.multiply(Integer.MAX_VALUE, 2), 
-            "Multiplying with values too large should throw ArithmeticException due to overflow.");
+    void testMultiplyWithLargeValues() {
+        assertThrows(ArithmeticException.class, () -> calculator.multiply(Integer.MAX_VALUE, 2),
+            "Multiplying large values should throw ArithmeticException due to overflow.");
     }
 }
-
