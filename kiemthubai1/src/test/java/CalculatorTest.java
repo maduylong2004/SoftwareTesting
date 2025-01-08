@@ -96,4 +96,11 @@ public class CalculatorTest {
         assertThrows(ArithmeticException.class, () -> calculator.multiply(Integer.MAX_VALUE, 2),
             "Multiplying large values should throw ArithmeticException due to overflow.");
     }
+
+    //Kiểm thử tràn số khi cộng
+    @Test
+    void testAddWithLargeValues() {
+        assertThrows(ArithmeticException.class, () -> calculator.add(Integer.MAX_VALUE, 1),
+            "Adding large values should throw ArithmeticException due to overflow.");
+    }
 }

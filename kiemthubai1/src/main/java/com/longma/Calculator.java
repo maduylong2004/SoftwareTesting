@@ -2,6 +2,11 @@ package com.longma;
 
 public class Calculator {
     public int add(int a, int b) {
+        // Kiểm tra tràn số khi a và b đều cùng dấu
+        if ((b > 0 && a > Integer.MAX_VALUE - b) || 
+            (b < 0 && a < Integer.MIN_VALUE - b)) {
+            throw new ArithmeticException("Overflow occurred during addition");
+        }
         return a + b;
     }
     public int subtract(int a, int b) {
