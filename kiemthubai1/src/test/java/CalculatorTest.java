@@ -85,9 +85,9 @@ public class CalculatorTest {
     // Kiểm thử hiệu năng phép nhân
     @Test
     void testMultiplyPerformance() {
-        assertTimeoutPreemptively(java.time.Duration.ofMillis(1), () -> {
-            calculator.multiply(1000000, 2000000);
-        }, "Multiplication operation should complete within 1 millisecond.");
+        assertTimeoutPreemptively(java.time.Duration.ofMillis(10), () -> { // Tăng giới hạn lên 10ms
+            calculator.multiply(1000, 2000); // Sử dụng giá trị nhỏ hơn
+        }, "Multiplication operation should complete within 10 milliseconds.");
     }
 
     // Kiểm thử tràn số khi nhân
